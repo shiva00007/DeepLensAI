@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -21,6 +21,10 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "./ui/switch";
 import { Button } from "./ui/button";
+import { createAccount } from "@/actions/dashboard";
+import useFetch from "@/hooks/use-fetch";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 const CreateAccountDrawer = ({ children }) => {
   const [open, setOpen] = useState(false);
 
@@ -42,9 +46,31 @@ const CreateAccountDrawer = ({ children }) => {
     },
   });
 
+  const {
+    loading: createAccountLoading,
+    fn: createAccountFn,
+    error,
+    data: newAccount,
+  } = useFetch(createAccount);
+
   const onSubmit = async (data) => {
-    console.log(data);
+    await createAccountFn(data);
   };
+
+  useEffect(() => {
+    if (newAccount && !createAccountLoading) {
+      toast.success("Account created successfully");
+      reset();
+      setOpen(false);
+    }
+  }, [newAccount, createAccountLoading]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message || "Failed to create account");
+    }
+  }, [error]);
+
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>{children}</DrawerTrigger>
@@ -135,8 +161,19 @@ const CreateAccountDrawer = ({ children }) => {
                   Cancel
                 </Button>
               </DrawerClose>
-              <Button type="submit" className="flex-1">
-                Create Account
+              <Button
+                type="submit"
+                className="flex-1"
+                disabled={createAccountLoading}
+              >
+                {createAccountLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create Account"
+                )}
               </Button>
             </div>
           </form>
