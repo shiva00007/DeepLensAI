@@ -34,13 +34,6 @@ const BudgetProgress = ({ initialBudget, currentExpenses }) => {
     ? (currentExpenses / initialBudget.amount) * 100
     : 0;
 
-  const progressBarClass =
-    percentUsed >= 90
-      ? "bg-red-500"
-      : percentUsed >= 75
-      ? "bg-yellow-500"
-      : "bg-green-500";
-
   const handleUpdateBudget = async () => {
     const amount = parseFloat(newBudget);
 
@@ -133,7 +126,14 @@ const BudgetProgress = ({ initialBudget, currentExpenses }) => {
           <div className="space-y-2">
             <Progress
               value={percentUsed}
-              className={`h-4 rounded-full ${progressBarClass}`}
+              extraStyles={`${
+                // add to Progress component
+                percentUsed >= 90
+                  ? "bg-red-500"
+                  : percentUsed >= 75
+                    ? "bg-yellow-500"
+                    : "bg-green-500"
+              }`}
             />
             <p className="text-xs text-muted-foreground text-right">
               {percentUsed.toFixed(1)}% used
