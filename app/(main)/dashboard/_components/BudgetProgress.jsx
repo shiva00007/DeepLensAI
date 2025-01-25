@@ -34,6 +34,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses }) => {
     ? (currentExpenses / initialBudget.amount) * 100
     : 0;
 
+  console.log(percentUsed);
   const handleUpdateBudget = async () => {
     const amount = parseFloat(newBudget);
 
@@ -113,6 +114,7 @@ const BudgetProgress = ({ initialBudget, currentExpenses }) => {
                   size="icon"
                   onClick={() => setIsEditing(true)}
                   className="h-6 w-6"
+                  disabled={isLoading}
                 >
                   <Pencil className="h-3 w-3" />
                 </Button>
